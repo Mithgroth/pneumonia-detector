@@ -1,0 +1,44 @@
+name: Update Hugging Face Model
+
+on:
+  push:
+    paths:
+      - 'output/model.pkl'
+  workflow_dispatch:  # Allows manual triggering of the workflow
+
+jobs:
+  update-model:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install Git LFS
+        run: |
+          sudo apt-get update
+          sudo apt-get install git-lfs
+          git lfs install
+
+      - name: Configure Git
+        env:
+          GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
+          GIT_USER_NAME: ${{ secrets.GIT_USER_NAME }}
+        run: |
+          git config --global user.email "$GIT_USER_EMAIL"
+          git config --global user.name "$GIT_USER_NAME"
+          git remote add hf-models https://huggingface.co/models/Mithgroth/pneumonia-detector.git
+
+      - name: Track model file with Git LFS
+        run: |
+          git lfs track "output/model.pkl"
+          git add .gitattributes
+          git commit -m "Track model file with Git LFS" || true
+
+      - name: Commit and push changes to Hugging Face Models
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git add output/model.pkl
+          git commit -m "Update model.pkl" || true
+          git push --force https://Mithgroth:${{ secrets.HF_TOKEN }}@huggingface.co/models/Mithgroth/pneumonia-detector.git main
