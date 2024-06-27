@@ -27,7 +27,7 @@ jobs:
         run: |
           git config --global user.email "$GIT_USER_EMAIL"
           git config --global user.name "$GIT_USER_NAME"
-          git remote add hf-models https://huggingface.co/models/Mithgroth/pneumonia-detector.git
+          git remote add hf-models https://huggingface.co/Mithgroth/pneumonia-detector.git
 
       - name: Track model file with Git LFS
         run: |
@@ -41,4 +41,4 @@ jobs:
         run: |
           git add output/model.pkl
           git commit -m "Update model.pkl" || true
-          git push --force https://Mithgroth:${{ secrets.HF_TOKEN }}@huggingface.co/models/Mithgroth/pneumonia-detector.git main
+          git push --force https://Mithgroth:${{ secrets.HF_TOKEN }}@huggingface.co/Mithgroth/pneumonia-detector.git main
